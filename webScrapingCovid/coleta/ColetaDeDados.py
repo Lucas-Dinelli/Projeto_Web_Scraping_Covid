@@ -47,6 +47,6 @@ class ColetaDeDados:
                                                   listaDeItens[i+5].text)
 
                     self.adicionarTerritorioNaLista(objetoTerritorio)
-                    i = i + 7
+                    i = i + 5   # Salto para o próximo território
                 elif not nomeDoterritorio.replace(" ", "").isalpha():
                     i = i + 1
