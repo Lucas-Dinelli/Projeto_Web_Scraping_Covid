@@ -7,13 +7,13 @@ class Territorio:
     taxaDeLetalidade = None
     mortesPorMilhaoDeHabitantes = None
 
-    def __init__(self, nome, casos, mortes, curados, taxaDeLetalidade, mortesPorMilhaoDeHabitantes):
+    def __init__(self, nome, casos, mortes, curados, numeroTotalDaPopulacao):
         self.setNome(nome)
         self.setCasos(casos)
         self.setMortes(mortes)
         self.setCurados(curados)
-        self.setTaxaDeLetalidade(taxaDeLetalidade)
-        self.setMortesPorMilhaoDeHabitantes(mortesPorMilhaoDeHabitantes)
+        self.setTaxaDeLetalidade()
+        self.setMortesPorMilhaoDeHabitantes(numeroTotalDaPopulacao)
 
 
     # Getters...
@@ -40,15 +40,12 @@ class Territorio:
     # ... Setters
 
     def setNome(self, nome):
-        if(nome == ""):
-            nome = "Indonésia"
-
         self.nome = nome
 
 
     def setCasos(self, casos):
         try:
-            casos = int(casos.replace(chr(160), ""))
+            casos = int(self.ajustarValorString(casos))
         except:
             casos = 0
 
@@ -57,7 +54,7 @@ class Territorio:
 
     def setMortes(self, mortes):
         try:
-            mortes = int(mortes.replace(chr(160), ""))
+            mortes = int(self.ajustarValorString(mortes))
         except:
             mortes = 0
 
@@ -66,26 +63,31 @@ class Territorio:
 
     def setCurados(self, curados):
         try:
-            curados = int(curados.replace(chr(160), ""))
+            curados = int(self.ajustarValorString(curados))
         except:
             curados = 0
 
         self.curados = curados
 
 
-    def setTaxaDeLetalidade(self, taxaDeLetalidade):
+    def setTaxaDeLetalidade(self):
+        if self.getCasos() > 0:
+            self.taxaDeLetalidade = (self.getMortes() / self.getCasos()) * 100
+        else:
+            self.taxaDeLetalidade = 0
+
+
+    def setMortesPorMilhaoDeHabitantes(self, numeroTotalDaPopulacao):
         try:
-            taxaDeLetalidade = float(taxaDeLetalidade.replace(chr(160), "").replace("%", "").replace(",", "."))
-        except:
-            taxaDeLetalidade = 0
-
-        self.taxaDeLetalidade = taxaDeLetalidade
-
-
-    def setMortesPorMilhaoDeHabitantes(self, mortesPorMilhaoDeHabitantes):
-        try:
-            mortesPorMilhaoDeHabitantes = int(mortesPorMilhaoDeHabitantes.replace(chr(160), ""))
+            numeroTotalDaPopulacao = int(self.ajustarValorString(numeroTotalDaPopulacao))
+            mortesPorMilhaoDeHabitantes = (self.getMortes() / numeroTotalDaPopulacao) * 1000000     # Fórmula
         except:
             mortesPorMilhaoDeHabitantes = 0
 
-        self.mortesPorMilhaoDeHabitantes = mortesPorMilhaoDeHabitantes
+        self.mortesPorMilhaoDeHabitantes = round(mortesPorMilhaoDeHabitantes)   # Arredonda
+
+
+    # Retira os caracteres não numéricos caso existam
+    def ajustarValorString(self, valorString):
+        novoValorString = valorString.replace(",", "")
+        return novoValorString

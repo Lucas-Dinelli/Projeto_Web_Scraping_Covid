@@ -5,19 +5,19 @@ from coleta.Territorio import Territorio
 
 class ColetaDeDados:
 
-    requisicao = None
-
     listaDeTerritorios = []
 
-    def __init__(self, url):
-        tabela = self.requisitarConexao(url)
-        self.organizarElementos(tabela)
+    def __init__(self):
+        tabelaCovid = self.requisitarConexao("https://en.wikipedia.org/wiki/Template:COVID-19_pandemic_data", 'table', 'wikitable plainrowheaders sortable')
+        tabelaPopulacoes = self.requisitarConexao("https://en.wikipedia.org/wiki/List_of_countries_and_dependencies_by_population", 'table', 'wikitable sortable plainrowheaders')
+        populacoes = self.organizaElementosPopulacionais(tabelaPopulacoes)
+        self.organizarElementosCovid(tabelaCovid, populacoes)
 
     # Promove a conexão e a extração do conteúdo solicitado da Web
-    def requisitarConexao(self, url):
-        self.requisicao = requests.get(url)
-        soup = BeautifulSoup(self.requisicao.text, "html.parser")
-        return soup.find_all('table', class_='wikitable sortable mw-collapsible')
+    def requisitarConexao(self, url, tipoDeElemento, className):
+        requisicao = requests.get(url)
+        soup = BeautifulSoup(requisicao.text, "html.parser")
+        return soup.find_all(tipoDeElemento, class_=className)
 
 
     def adicionarTerritorioNaLista(self, territorio):
@@ -29,24 +29,51 @@ class ColetaDeDados:
     def getListaDeTerritorios(self):
         return self.listaDeTerritorios
 
-    # Pega os elementos da tabela coletada e retira somente o conjunto de dados necessário
-    def organizarElementos(self, tabela):
+
+    # Pega os elementos da tabela coletada e retira somente o conjunto necessário de dados
+    def organizaElementosPopulacionais(self, tabela):
+        populacoes = {}
         for item in tabela:
-            listaDeItens = item.find_all('td')
+            listaDeDados = item.find_all('td')  # PAREI AQUI
+
+            salto = 5   # Valor referente ao salto que é dado na tabela para o próximo país
+
+            for i in range(0, len(listaDeDados), salto):
+                local = listaDeDados[i].text
+                posicaoDoColchete = local.find("[")
+                posicaoDoParentese = local.find("(")
+                numeroDaPopulacao = listaDeDados[i+1].text
+
+                if posicaoDoColchete > -1:
+                    local = local[:posicaoDoColchete].strip()
+                elif posicaoDoParentese > -1:
+                    local = local[:posicaoDoParentese].strip()
+                else:
+                    local = local.strip()   # O método .strip() retira os espaços desnecessários
+
+                populacoes.__setitem__(local, numeroDaPopulacao)
+
+        return populacoes
+
+
+    # Pega os elementos da tabela coletada e retira somente o conjunto necessário de dados
+    def organizarElementosCovid(self, tabela, populacoes):
+        for item in tabela:
+            listaDeNomes = item.find_all('tr')
+            listaDeValores = item.find_all('td')
+
             i = 0
 
-            while i < len(listaDeItens)-1:
-                nomeDoterritorio = listaDeItens[i].text.strip()
+            for nome in listaDeNomes:
+                nomeTerritorio = nome.a.text
+                if (ord(nomeTerritorio[0].upper()) >= 65 and ord(nomeTerritorio[0].upper()) <= 90) and nomeTerritorio != "UTC":
+                    casos = listaDeValores[i].text
+                    mortes = listaDeValores[i+1].text
+                    curados = listaDeValores[i+2].text
+                    numeroTotalDaPopulacao = populacoes.get(nomeTerritorio)
 
-                if nomeDoterritorio.find("[") > -1:
-                    nomeDoterritorio = nomeDoterritorio[:nomeDoterritorio.find("[")]
-
-                if nomeDoterritorio.replace(" ", "").isalpha() or listaDeItens[i].text == "":
-                    objetoTerritorio = Territorio(nomeDoterritorio, listaDeItens[i+1].text, listaDeItens[i+2].text,
-                                                  listaDeItens[i+3].text, listaDeItens[i+4].text,
-                                                  listaDeItens[i+5].text)
+                    objetoTerritorio = Territorio(nomeTerritorio, casos, mortes, curados, numeroTotalDaPopulacao)
 
                     self.adicionarTerritorioNaLista(objetoTerritorio)
-                    i = i + 5   # Salto para o próximo território
-                elif not nomeDoterritorio.replace(" ", "").isalpha():
-                    i = i + 1
+
+                    i = i + 4   # Salto para o próximo número de casos do próximo território

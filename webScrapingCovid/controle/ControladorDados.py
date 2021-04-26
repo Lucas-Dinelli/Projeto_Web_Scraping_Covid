@@ -58,6 +58,8 @@ class ControladorDados:
                 dadoFormatado = (centena + " " + dadoFormatado).strip()
             dadoFormatado = dado + " " + dadoFormatado
         else:
-            dadoFormatado = dado.replace(".", ",") + " %"
+            dadoFormatado = dado.replace(".", ",")
+            posicaoDaVirgula = dadoFormatado.find(",")
+            dadoFormatado = dadoFormatado[:posicaoDaVirgula + 3] + " %"
 
         return dadoFormatado
