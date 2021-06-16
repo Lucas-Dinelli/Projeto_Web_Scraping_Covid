@@ -9,8 +9,8 @@ class ColetaDeDados:
 
     def __init__(self):
         tabelaCovid = self.requisitarConexao("https://en.wikipedia.org/wiki/Template:COVID-19_pandemic_data", 'table', 'wikitable plainrowheaders sortable')
-        tabelaPopulacoes = self.requisitarConexao("https://en.wikipedia.org/wiki/List_of_countries_and_dependencies_by_population", 'table', 'wikitable sortable plainrowheaders')
-        populacoes = self.organizaElementosPopulacionais(tabelaPopulacoes)
+        tabelaPopulacoes = self.requisitarConexao("https://en.wikipedia.org/wiki/List_of_countries_and_dependencies_by_population", 'table', 'sortable wikitable')
+        populacoes = self.organizarElementosPopulacionais(tabelaPopulacoes)
         self.organizarElementosCovid(tabelaCovid, populacoes)
 
     # Promove a conexão e a extração do conteúdo solicitado da Web
@@ -31,25 +31,22 @@ class ColetaDeDados:
 
 
     # Pega os elementos da tabela coletada e retira somente o conjunto necessário de dados
-    def organizaElementosPopulacionais(self, tabela):
+    def organizarElementosPopulacionais(self, tabela):
         populacoes = {}
         for item in tabela:
-            listaDeDados = item.find_all('td')  # PAREI AQUI
+            listaDeDados = item.find_all('td')
 
             salto = 5   # Valor referente ao salto que é dado na tabela para o próximo país
 
             for i in range(0, len(listaDeDados), salto):
                 local = listaDeDados[i].text
-                posicaoDoColchete = local.find("[")
-                posicaoDoParentese = local.find("(")
                 numeroDaPopulacao = listaDeDados[i+1].text
 
-                if posicaoDoColchete > -1:
-                    local = local[:posicaoDoColchete].strip()
-                elif posicaoDoParentese > -1:
-                    local = local[:posicaoDoParentese].strip()
-                else:
-                    local = local.strip()   # O método .strip() retira os espaços desnecessários
+                for posicao in range(len(local)):
+                    caractere = str(local[posicao])
+                    if not caractere.isalpha() and not caractere.isspace():
+                        local = local[:posicao].strip()   # O método .strip() retira os espaços desnecessários
+                        break
 
                 populacoes.__setitem__(local, numeroDaPopulacao)
 
