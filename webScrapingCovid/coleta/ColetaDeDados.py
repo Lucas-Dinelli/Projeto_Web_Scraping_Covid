@@ -9,7 +9,7 @@ class ColetaDeDados:
 
     def __init__(self):
         tabelaCovid = self.requisitarConexao("https://en.wikipedia.org/wiki/Template:COVID-19_pandemic_data", 'table', 'wikitable plainrowheaders sortable')
-        tabelaPopulacoes = self.requisitarConexao("https://en.wikipedia.org/wiki/List_of_countries_and_dependencies_by_population", 'table', 'wikitable sortable static-row-numbers plainrowheaders mw-datatable')
+        tabelaPopulacoes = self.requisitarConexao("https://www.worldometers.info/world-population/population-by-country", 'table', 'table')
         populacoes = self.organizarElementosPopulacionais(tabelaPopulacoes)
         self.organizarElementosCovid(tabelaCovid, populacoes)
 
@@ -35,21 +35,11 @@ class ColetaDeDados:
         populacoes = {}
         for item in tabela:
             listaDeDados = item.find_all('td')
-
-            salto = 7   # Valor referente ao salto que é dado na tabela para o próximo país
-
-            for i in range(6, len(listaDeDados), salto):
+            salto = 12  # Valor referente ao salto que é dado na tabela para o próximo país
+            for i in range(1, len(listaDeDados), salto):
                 local = listaDeDados[i].text
-                numeroDaPopulacao = listaDeDados[i+2].text
-
-                for posicao in range(len(local)):
-                    caractere = str(local[posicao])
-                    if not caractere.isalpha() and not caractere.isspace():
-                        local = local[:posicao].strip()   # O método .strip() retira os espaços desnecessários
-                        break
-
+                numeroDaPopulacao = listaDeDados[i + 1].text
                 populacoes.__setitem__(local, numeroDaPopulacao)
-
         return populacoes
 
 
