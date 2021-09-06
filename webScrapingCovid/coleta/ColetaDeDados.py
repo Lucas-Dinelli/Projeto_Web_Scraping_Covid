@@ -8,7 +8,7 @@ class ColetaDeDados:
     listaDeTerritorios = []
 
     def __init__(self):
-        tabelaCovid = self.requisitarConexao("https://en.wikipedia.org/wiki/Template:COVID-19_pandemic_data", 'table', 'wikitable plainrowheaders sortable')
+        tabelaCovid = self.requisitarConexao("https://en.wikipedia.org/wiki/Template:COVID-19_pandemic_data", 'table', 'wikitable')
         tabelaPopulacoes = self.requisitarConexao("https://www.worldometers.info/world-population/population-by-country", 'table', 'table')
         populacoes = self.organizarElementosPopulacionais(tabelaPopulacoes)
         self.organizarElementosCovid(tabelaCovid, populacoes)
