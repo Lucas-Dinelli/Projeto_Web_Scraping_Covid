@@ -83,10 +83,6 @@ class ControladorGrafico(controladorPai.ControladorDados):
                 listaDeValores.append(territorio.getMortes())
                 self.setLabelEixoY("")
 
-            elif self.getRepresentacao().lower() == "curados":
-                listaDeValores.append(territorio.getCurados())
-                self.setLabelEixoY("")
-
             elif self.getRepresentacao().lower() == "taxa de letalidade":
                 listaDeValores.append(territorio.getTaxaDeLetalidade())
                 self.setLabelEixoY("Porcentagem (%)")

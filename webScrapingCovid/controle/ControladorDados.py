@@ -35,9 +35,6 @@ class ControladorDados:
         elif criterioDeOrdenacao == "morte" or criterioDeOrdenacao == "mortes":
             self.listaDeTerritoriosOrdenada = sorted(self.getListaDeTerritorios(), key=territorio.Territorio.getMortes)
 
-        elif criterioDeOrdenacao == "curado" or criterioDeOrdenacao == "curados":
-            self.listaDeTerritoriosOrdenada = sorted(self.getListaDeTerritorios(), key=territorio.Territorio.getCurados)
-
         elif criterioDeOrdenacao == "taxa de letalidade":
             self.listaDeTerritoriosOrdenada = sorted(self.getListaDeTerritorios(), key=territorio.Territorio.getTaxaDeLetalidade)
 

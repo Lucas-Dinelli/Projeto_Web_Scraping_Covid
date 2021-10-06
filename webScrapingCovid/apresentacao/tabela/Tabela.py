@@ -6,7 +6,7 @@ class Tabela:
 
     janela = None
 
-    listaDeNomesDasColunas = ["Local", "Casos", "Mortes", "Curados", "Taxa de letalidade", "Mortes p/ milhão"]
+    listaDeNomesDasColunas = ["Local", "Casos", "Mortes", "Taxa de letalidade", "Mortes p/ milhão"]
 
     controlador = None
 
@@ -41,7 +41,7 @@ class Tabela:
         style = ttk.Style()
         style.configure('Treeview', rowheight=70)
 
-        self.inserirColunas(150)
+        self.inserirColunas(178)
 
         self.inserirLinhasDeDados(self.controlador.getListaDeTerritorios())
 
@@ -59,11 +59,10 @@ class Tabela:
             nome = territorio.getNome()
             casos = self.controlador.formatarApresentacaoDeDado(territorio.getCasos())
             mortes = self.controlador.formatarApresentacaoDeDado(territorio.getMortes())
-            curados = self.controlador.formatarApresentacaoDeDado(territorio.getCurados())
             taxaDeLetalidade = self.controlador.formatarApresentacaoDeDado(territorio.getTaxaDeLetalidade())
             mortesPorMilhaoDeHabitantes = self.controlador.formatarApresentacaoDeDado(territorio.getMortesPorMilhaoDeHabitantes())
 
-            self.tree.insert("", END, values=(nome, casos, mortes, curados, taxaDeLetalidade, mortesPorMilhaoDeHabitantes))
+            self.tree.insert("", END, values=(nome, casos, mortes, taxaDeLetalidade, mortesPorMilhaoDeHabitantes))
 
         self.tree.bind("<Double-1>", self.clique)       # Capta a ação de se clicar na tabela
 

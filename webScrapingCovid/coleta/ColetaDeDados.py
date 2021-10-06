@@ -46,21 +46,25 @@ class ColetaDeDados:
     # Pega os elementos da tabela coletada e retira somente o conjunto necessário de dados
     def organizarElementosCovid(self, tabela, populacoes):
         for item in tabela:
-            listaDeNomes = item.find_all('tr')
             listaDeValores = item.find_all('td')
 
             i = 0
 
-            for nome in listaDeNomes:
-                nomeTerritorio = nome.a.text
-                if (ord(nomeTerritorio[0].upper()) >= 65 and ord(nomeTerritorio[0].upper()) <= 90) and nomeTerritorio != "UTC":
-                    casos = listaDeValores[i].text
-                    mortes = listaDeValores[i+1].text
-                    curados = listaDeValores[i+2].text
+            while listaDeValores[i].text == "":
+                nomeTerritorio = self.retirarCaracteresIndesejados(listaDeValores[i+1].text)
+                if not(nomeTerritorio.startswith("World") or nomeTerritorio.startswith("European")):
+                    casos = listaDeValores[i+2].text
+                    mortes = listaDeValores[i+3].text
                     numeroTotalDaPopulacao = populacoes.get(nomeTerritorio)
 
-                    objetoTerritorio = Territorio(nomeTerritorio, casos, mortes, curados, numeroTotalDaPopulacao)
+                    objetoTerritorio = Territorio(nomeTerritorio, casos, mortes, numeroTotalDaPopulacao)
 
                     self.adicionarTerritorioNaLista(objetoTerritorio)
 
-                    i = i + 4   # Salto para o próximo número de casos do próximo território
+                i = i + 4  # Salto para o próximo território
+
+    def retirarCaracteresIndesejados(self, valorString:str):
+        posicao = valorString.find("[")
+        if(posicao > -1):
+            return valorString[:posicao]
+        return valorString

@@ -3,15 +3,13 @@ class Territorio:
     nome = None
     casos = None
     mortes = None
-    curados = None
     taxaDeLetalidade = None
     mortesPorMilhaoDeHabitantes = None
 
-    def __init__(self, nome, casos, mortes, curados, numeroTotalDaPopulacao):
+    def __init__(self, nome, casos, mortes, numeroTotalDaPopulacao):
         self.setNome(nome)
         self.setCasos(casos)
         self.setMortes(mortes)
-        self.setCurados(curados)
         self.setTaxaDeLetalidade()
         self.setMortesPorMilhaoDeHabitantes(numeroTotalDaPopulacao)
 
@@ -26,9 +24,6 @@ class Territorio:
 
     def getMortes(self):
         return self.mortes
-
-    def getCurados(self):
-        return self.curados
 
     def getTaxaDeLetalidade(self):
         return self.taxaDeLetalidade
@@ -59,15 +54,6 @@ class Territorio:
             mortes = 0
 
         self.mortes = mortes
-
-
-    def setCurados(self, curados):
-        try:
-            curados = int(self.ajustarValorString(curados))
-        except:
-            curados = 0
-
-        self.curados = curados
 
 
     def setTaxaDeLetalidade(self):
